@@ -1,0 +1,20 @@
+{
+  "name": "webcrawler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "start:baseUrl": "node main.js https://wagslane.dev",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "cli-table": "^0.3.11",
+    "jsdom": "^24.0.0"
+  }
+}
