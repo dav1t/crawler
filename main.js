@@ -13,8 +13,13 @@ async function main() {
   }
 
   const baseURL = argv[2];
+  console.log("Base URL:", baseURL);
 
-  const pages = await crawlPage(baseURL, baseURL, {});
+  const pages = await crawlPage(baseURL, baseURL, {
+    internals: {},
+    externals: {},
+    errors: {},
+  });
 
   printReport(pages);
 }

@@ -29,6 +29,14 @@ function getURLsFromHTML(html, baseURL) {
 }
 
 async function crawlPage(baseURL, currentUrl, pages) {
+  const { internals, externals, errors } = pages;
+
+  if (!internals[currentUrl]) {
+    internals[currentUrl] = 0;
+  }
+
+  internals[currentUrl]++;
+
   console.log(`Crawling: ${currentUrl}`);
   const response = await fetch(currentUrl);
 
@@ -38,25 +46,36 @@ async function crawlPage(baseURL, currentUrl, pages) {
   }
 
   if (!response.headers.get("content-type").includes("text/html")) {
-    console.log("Error: Not an HTML page");
+    console.log(`Error: ${currentUrl} Not an HTML page`);
+
+    if (!errors[currentUrl]) {
+      errors[currentUrl] = 0;
+    }
+
+    errors[currentUrl]++;
+
     return;
   }
 
   const html = await response.text();
 
-  const urls = getURLsFromHTML(html, currentUrl);
+  const urls = getURLsFromHTML(html, baseURL);
 
-  urls.map(normilizeURL).forEach((url) => {
-    if (!pages[url]) {
-      pages[url] = 0;
+  for (const url of urls) {
+    if (!url.startsWith(baseURL)) {
+      if (!externals[url]) {
+        externals[url] = 0;
+      }
+      externals[url]++;
+      continue;
     }
 
-    if (pages[url] === 0 && url.includes(baseURL)) {
-      crawlPage(baseURL, url, pages);
+    if (!internals[url]) {
+      await crawlPage(baseURL, url, pages);
+    } else {
+      internals[url]++;
     }
-
-    pages[url]++;
-  });
+  }
 
   return pages;
 }
